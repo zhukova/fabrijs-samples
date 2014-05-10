@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="fabric.js"></script>
+	<style>
+	ul li{list-style: none;display: inline-block;}
+	#items img{width: 100px;}
+	#items .info{display:none;}
+	</style>
+</head>
+<body>
+
+	<textarea cols=100 rows=10 id="fb-json"></textarea>
+	<br>
+	<button id="fb-import">Import from JSON</button>
+
+	<canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;"></canvas>
+	<div id="myCanvas-info">
+		<div id="active-element-info"></div>
+	</div>
+	<script type="text/javascript">
+		// create a wrapper around native canvas element (with id="c")
+		var canvas = new fabric.Canvas('myCanvas');
+
+		$('#fb-import').on('click', function(e){
+			canvas.loadFromJSON($('#fb-json').val(), canvas.renderAll.bind(canvas));
+		});
+	</script>
+</body>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="fabric.js"></script>
+	<style>
+	ul li{list-style: none;display: inline-block;}
+	#items img{width: 100px;}
+	#items .info{display:none;}
+	</style>
+</head>
+<body>
+Click the element to add it to canvas:
+<ul id="items">
+	<li>
+		<span class="info">This a an apple logo. It is blue...</span>
+		<img src="img/apple.png" id="apple-logo"/>
+	</li>
+	<li>
+		<span class="info">Here is a skype logo description</span>
+		<img src="img/skype.png" id="skype-logo"/>
+	</li>
+	<li>
+		<span class="info">Twitter logo description...</span>
+		<img src="img/twitter.png" id="twitter-logo"/>
+	</li>
+	<li>
+		<span class="info">Vanamo logo description here...</span>
+		<img src="img/vanamo.png" id="vanamo-logo"/>
+	</li>
+</ul>
+
+
+<ul>
+Elements manipulation panel:
+	<li><button id="fb-remove">Remove selected element(s)</button></li>
+	<li><button id="fb-backward">Backwards</button></li>
+	<li><button id="fb-forward">Forwards</button></li>
+	<li><button id="fb-tofront">To front</button></li>
+	<li><button id="fb-toback">To back</button></li>
+	<li><button id="fb-tojson">EXPORT TO JSON</button></li>
+</ul>
+	<canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;"></canvas>
+	<div id="myCanvas-info">
+		<div id="active-element-info"></div>
+		<div id="exported-data"></div>
+	</div>
+	<script type="text/javascript">
+		// create a wrapper around native canvas element (with id="c")
+		var canvas = new fabric.Canvas('myCanvas');
+
+
+		// attach add element event
+		$('img', '#items').on('click', function(){
+			// add image into fabric
+			var oImg = new fabric.Image(this, {
+				left: 100,
+				top: 100,
+				angle: 0
+			});
+			canvas.add(oImg);
+		})
+
+		// attach remove element event
+		$('#fb-remove').on('click', function(){
+			if(canvas.getActiveGroup()){
+      			canvas.getActiveGroup().forEachObject(function(o){ canvas.remove(o) });
+		      	canvas.discardActiveGroup().renderAll();
+		    } else {
+		      	canvas.remove(canvas.getActiveObject());
+		    }
+		});
+
+		// attach backward event
+		$('#fb-backward').on('click', function(){
+			canvas.getActiveObject().sendBackwards();
+		});
+
+		// attach forward event
+		$('#fb-forward').on('click', function(){
+			canvas.getActiveObject().bringForward();
+		});
+
+		// attach to front event
+		$('#fb-tofront').on('click', function(){
+			canvas.getActiveObject().bringToFront();
+		});
+
+		// attach to back event
+		$('#fb-toback').on('click', function(){
+			canvas.getActiveObject().sendToBack();
+		});
+
+		// element is selected event listener
+		canvas.on('object:selected', function(e){
+			var activeObject = e.target;
+			var oEl = activeObject.getElement();
+			// put element description into info block
+			$('#active-element-info').text($(oEl).siblings('.info').text());
+		});
+
+		// selection is cleared
+		canvas.on('selection:cleared', function(e){
+			//clear info-block
+			$('#active-element-info').empty();
+		});
+
+		$('#fb-tojson').on('click', function(e){
+			console.log(canvas.toJSON());
+			$('#exported-data').text(JSON.stringify(canvas.toJSON()));
+		});
+	</script>
+</body>
